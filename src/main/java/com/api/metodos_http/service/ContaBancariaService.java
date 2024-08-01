@@ -27,14 +27,20 @@ public class ContaBancariaService {
         return contaBancariaRepository.save(contaBancaria);
     }
 
-    // public ContaBancaria update(Long id, ContaBancaria contaBancaria){
-    //     ContaBancaria contaBancariaExistente = getById(id);
+    public ContaBancaria update(Long id, ContaBancaria contaBancaria){
+        ContaBancaria contaBancariaExistente = getById(id);
 
-    //     if (contaBancariaExistente == null){
-    //         return null;
-    //     }
+        if (contaBancariaExistente == null){
+            return null;
+        }
 
-    //     contaBancariaExistente.setTipoConta(contaBancaria.getTipoConta());
-    // }
+        contaBancariaExistente.setTipoConta(contaBancaria.getTipoConta());
+        contaBancariaExistente.setCliente(contaBancaria.getCliente());
 
+            return contaBancariaRepository.save(contaBancariaExistente);
+    }
+
+    public void delete(Long id){
+        contaBancariaRepository.deleteById(id);
+    }
 }

@@ -24,7 +24,7 @@ public class ContaBancariaController {
     }
 
     // Buscar conta pela número - getById
-    @GetMapping("/{numeroConta}")
+    @GetMapping("/{id}")
     public ResponseEntity<ContaBancaria> getById(@PathVariable Long id){
         ContaBancaria contaBancaria = contaBancariaService.getById(id);
 
@@ -42,7 +42,7 @@ public class ContaBancariaController {
         return ResponseEntity.ok(contaBancariaSalva);
     }
 
-    @PutMapping("/{numeroConta}")
+    @PutMapping("/{id}")
     public ResponseEntity<ContaBancaria> update(@PathVariable Long id, @RequestBody ContaBancaria contaBancaria){
         ContaBancaria contaBancariaExistente = contaBancariaService.getById(id);
 
@@ -56,7 +56,18 @@ public class ContaBancariaController {
         ContaBancaria contaBancariaSalva = contaBancariaService.create(contaBancariaExistente);
 
         return ResponseEntity.ok(contaBancariaSalva);
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        ContaBancaria contaBancaria = contaBancariaService.getById(id);
 
+        if (contaBancaria == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        contaBancariaService.delete(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
