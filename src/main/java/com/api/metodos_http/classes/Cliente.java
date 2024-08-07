@@ -40,4 +40,6 @@ public class Cliente {
     @Column(name = "data_nascimento")
     private String dataNascimento;
 
+    @Column(name = "cliente_ativo")
+    private boolean clienteAtivo = true;
 }

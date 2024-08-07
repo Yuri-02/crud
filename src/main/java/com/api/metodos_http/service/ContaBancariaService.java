@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.api.metodos_http.classes.ContaBancaria;
+import com.api.metodos_http.classes.Transferencia;
 import com.api.metodos_http.repository.ContaBancariaRepository;
 
 @Service
@@ -13,6 +14,10 @@ public class ContaBancariaService {
 
     @Autowired
     private ContaBancariaRepository contaBancariaRepository;
+
+    ContaBancariaService(ContaBancariaRepository contaBancariaRepository) {
+        this.contaBancariaRepository = contaBancariaRepository;
+    }
 
     public List<ContaBancaria> getAll(){
         return contaBancariaRepository.findAll();
@@ -27,20 +32,28 @@ public class ContaBancariaService {
         return contaBancariaRepository.save(contaBancaria);
     }
 
-    public ContaBancaria update(Long id, ContaBancaria contaBancaria){
-        ContaBancaria contaBancariaExistente = getById(id);
+    public ContaBancaria update(ContaBancaria contaExistente, ContaBancaria contaNova) {
 
-        if (contaBancariaExistente == null){
-            return null;
-        }
+        contaExistente.setSaldo(contaNova.getSaldo());
 
-        contaBancariaExistente.setTipoConta(contaBancaria.getTipoConta());
-        contaBancariaExistente.setCliente(contaBancaria.getCliente());
-
-            return contaBancariaRepository.save(contaBancariaExistente);
+        return contaBancariaRepository.save(contaExistente);
     }
 
-    public void delete(Long id){
-        contaBancariaRepository.deleteById(id);
+    public ContaBancaria delete(Long id) {
+        ContaBancaria contaBancaria = getById(id);
+        contaBancariaRepository.delete(contaBancaria);
+        return contaBancaria;
+    }
+
+    public boolean temSaldo(Transferencia transferencia) {
+        // Comprarar o saldo da conta origem com o valor da transferencia
+        ContaBancaria conta = getById(transferencia.getContaOrigem().getNumeroConta());
+
+        boolean temSaldo = (
+            conta.getSaldo() 
+            >= 
+            transferencia.getValor()
+        );
+        return temSaldo;
     }
 }

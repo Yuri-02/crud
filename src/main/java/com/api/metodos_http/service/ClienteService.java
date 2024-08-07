@@ -28,24 +28,45 @@ public class ClienteService {
     }
 
     // Alternativa de escrever o update na camada de service
-    public Cliente update(Long id, Cliente cliente) {
-        Cliente clienteExistente = getById(id);
+    public Cliente update(Long id, Cliente clienteExistente, Cliente clienteNovo) {
 
-        if (clienteExistente == null) {
-            return null;
+        if (clienteNovo.getNome() != null) {
+            clienteExistente.setNome(clienteNovo.getNome());
         }
-
-        clienteExistente.setNome(cliente.getNome());
-        clienteExistente.setCpf(cliente.getCpf());
-        clienteExistente.setEndereco(cliente.getEndereco());
-        clienteExistente.setTelefone(cliente.getTelefone());
-        clienteExistente.setEmail(cliente.getEmail());
-        clienteExistente.setDataNascimento(cliente.getDataNascimento());
+        if (clienteNovo.getCpf() != null) {
+            clienteExistente.setCpf(clienteNovo.getCpf());
+        }
+        if (clienteNovo.getEndereco() != null) {
+            clienteExistente.setEndereco(clienteNovo.getEndereco());
+        }
+        if (clienteNovo.getTelefone() != null) {
+            clienteExistente.setTelefone(clienteNovo.getTelefone());
+        }
+        if (clienteNovo.getEmail() != null) {
+            clienteExistente.setEmail(clienteNovo.getEmail());
+        }
+        if (clienteNovo.getDataNascimento() != null) {
+            clienteExistente.setDataNascimento(clienteNovo.getDataNascimento());
+        }
+        if (clienteNovo.isClienteAtivo() != clienteExistente.isClienteAtivo()) {
+            clienteExistente.setClienteAtivo(clienteNovo.isClienteAtivo());
+        }
 
         return clienteRepository.save(clienteExistente);
     }
 
-    public void delete(Long id) {
+    public Cliente delete(Long id) {
+        // Delete anterior
         clienteRepository.deleteById(id);
+
+        // Delete lógico
+        Cliente cliente = getById(id);
+        cliente.setClienteAtivo(false);
+
+        return clienteRepository.save(cliente);
+    }
+
+    public List<Cliente> getAllAtivos() {
+        return clienteRepository.findByClienteAtivoTrue();
     }
 }

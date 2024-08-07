@@ -18,56 +18,36 @@ public class ContaBancariaController {
 
     // Buscar todas as contas - getAll
     @GetMapping
-    public ResponseEntity<List<ContaBancaria>> getAll(){
-        List<ContaBancaria> contaBancaria = contaBancariaService.getAll();
-        return ResponseEntity.ok(contaBancaria);
+    public ResponseEntity<List<ContaBancaria>> getAll() {
+        return ResponseEntity.ok(contaBancariaService.getAll());
     }
 
     // Buscar conta pela número - getById
     @GetMapping("/{id}")
-    public ResponseEntity<ContaBancaria> getById(@PathVariable Long id){
-        ContaBancaria contaBancaria = contaBancariaService.getById(id);
-
-        if (contaBancaria == null){
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(contaBancaria);
+    public ResponseEntity<ContaBancaria> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(contaBancariaService.getById(id));
     }
 
     // Criar uma conta - create
     @PostMapping
-    public ResponseEntity<ContaBancaria> create(@RequestBody ContaBancaria contaBancaria){
-        ContaBancaria contaBancariaSalva = contaBancariaService.create(contaBancaria);
-        return ResponseEntity.ok(contaBancariaSalva);
+    public ResponseEntity<ContaBancaria> create(@RequestBody ContaBancaria contaBancaria) {
+        return ResponseEntity.ok(contaBancariaService.create(contaBancaria));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ContaBancaria> update(@PathVariable Long id, @RequestBody ContaBancaria contaBancaria){
-        ContaBancaria contaBancariaExistente = contaBancariaService.getById(id);
+    public ResponseEntity<ContaBancaria> update(@PathVariable Long id, @RequestBody ContaBancaria contaNova) {
+        ContaBancaria contaExistente = contaBancariaService.getById(id);
 
-        if (contaBancariaExistente == null){
+        if (contaExistente == null) {
             return ResponseEntity.notFound().build();
         }
 
-        contaBancariaExistente.setTipoConta(contaBancaria.getTipoConta());
-        contaBancariaExistente.setCliente(contaBancaria.getCliente());
-
-        ContaBancaria contaBancariaSalva = contaBancariaService.create(contaBancariaExistente);
-
-        return ResponseEntity.ok(contaBancariaSalva);
+        return ResponseEntity.ok(contaBancariaService.update(contaExistente, contaNova));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        ContaBancaria contaBancaria = contaBancariaService.getById(id);
-
-        if (contaBancaria == null){
-            return ResponseEntity.notFound().build();
-        }
-
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         contaBancariaService.delete(id);
-
         return ResponseEntity.noContent().build();
     }
 }
