@@ -1,11 +1,14 @@
 package com.api.metodos_http.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.api.metodos_http.classes.Cliente;
+import com.api.metodos_http.dto.ClienteDTO;
+import com.api.metodos_http.dto.ClienteUpdateDTO;
 import com.api.metodos_http.repository.ClienteRepository;
 
 @Service
@@ -13,6 +16,9 @@ public class ClienteService {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    // @Autowired
+    // private EmailService emailService;
 
     public List<Cliente> getAll() {
         return clienteRepository.findAll();
@@ -24,7 +30,14 @@ public class ClienteService {
     }
 
     public Cliente create(Cliente cliente) {
-        return clienteRepository.save(cliente);
+         // Adicionar tratamentos para garantir que a persistencia 
+        // acontece com todos os dados necessários
+        Cliente clienteSalvo = clienteRepository.save(cliente);
+
+        // Disparar uma mensagem por email de detalhes do cliente
+        // emailService.sendEmailByJakartaMail(clienteSalvo);
+
+        return clienteSalvo;
     }
 
     // Alternativa de escrever o update na camada de service
@@ -68,5 +81,49 @@ public class ClienteService {
 
     public List<Cliente> getAllAtivos() {
         return clienteRepository.findByClienteAtivoTrue();
+    }
+
+    public ClienteUpdateDTO updateDTO(Cliente clienteExistente, ClienteUpdateDTO clienteNovo) {
+
+        // Converter o que é DTO pra Cliente
+
+        if (clienteNovo.getNome() != null) {
+            clienteExistente.setNome(clienteNovo.getNome());
+        }
+        if (clienteNovo.getTelefone() != null) {
+            clienteExistente.setTelefone(clienteNovo.getTelefone());
+        }
+        if (clienteNovo.getEmail() != null) {
+            clienteExistente.setEmail(clienteNovo.getEmail());
+        }
+
+        // Atualizar o clienteExistente com os dados do clienteNovo
+        Cliente clienteSalvo = clienteRepository.save(clienteExistente);
+
+        // Converter o Cliente pra DTO 
+        ClienteUpdateDTO clienteDTO = new ClienteUpdateDTO();
+        clienteDTO.setId(clienteSalvo.getId());
+        clienteDTO.setNome(clienteSalvo.getNome());
+        clienteDTO.setTelefone(clienteSalvo.getTelefone());
+        clienteDTO.setEmail(clienteSalvo.getEmail());
+
+        // Retornar
+        return clienteDTO;
+    }
+
+    public List<ClienteDTO> getClientesDTO() {
+
+        List<Cliente> clientes = clienteRepository.findAll();
+
+        List<ClienteDTO> clientesDTO = new ArrayList<>();
+
+        for (Cliente cliente : clientes) {
+            ClienteDTO clienteDTO = new ClienteDTO();
+            clienteDTO.setId(cliente.getId());
+            clienteDTO.setNome(cliente.getNome());
+
+            clientesDTO.add(clienteDTO);
+        }
+        return clientesDTO;
     }
 }

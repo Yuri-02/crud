@@ -25,7 +25,7 @@ public class ContaBancaria {
     @JoinColumn(name = "cliente_id", referencedColumnName = "id")
     private Cliente cliente;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private double saldo = 0.0;
 
     public void depositar(double valor) {

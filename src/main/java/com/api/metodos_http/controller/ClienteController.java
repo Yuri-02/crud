@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.api.metodos_http.classes.Cliente;
+import com.api.metodos_http.dto.ClienteDTO;
+import com.api.metodos_http.dto.ClienteUpdateDTO;
 import com.api.metodos_http.service.ClienteService;
 
 @RestController
@@ -42,6 +44,11 @@ public class ClienteController {
         return ResponseEntity.ok(clientes);
     }
 
+    @GetMapping("/nomes")
+    public ResponseEntity<List<ClienteDTO>> getClientesDTO() {
+        return ResponseEntity.ok(clienteService.getClientesDTO());
+    }
+
     // Criar um cliente - create
     @PostMapping
     public ResponseEntity<Cliente> create(@RequestBody Cliente cliente) {
@@ -61,6 +68,20 @@ public class ClienteController {
         Cliente clienteSalvo = clienteService.update(id, clienteExistente, clienteNovo);
 
         return ResponseEntity.ok(clienteSalvo);
+    }
+
+     @PutMapping("/dto/{id}")
+    public ResponseEntity<ClienteUpdateDTO> updateDTO (@PathVariable Long id, @RequestBody ClienteUpdateDTO clienteNovo) {
+        Cliente clienteExistente = clienteService.getById(id);
+
+        if (clienteExistente == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        ClienteUpdateDTO clienteDTO = clienteService.updateDTO(clienteExistente, clienteNovo);
+
+        return ResponseEntity.ok(clienteDTO);
+
     }
 
     // Deletar um cliente - delete
